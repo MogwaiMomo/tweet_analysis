@@ -1,0 +1,108 @@
+---
+title: "Tweet Collector"
+author: "Momoko Price"
+date: "9/9/2020"
+output: 
+  html_document:
+    css: style.css
+---
+
+***
+```{r default_setup, include=FALSE}
+knitr::opts_chunk$set(include = T,
+                      echo = F, 
+                      message = F, 
+                      warning = F,
+                      fig.align = 'left',
+                      out.width = '80%')
+
+# global options
+options(stringsAsFactors = F)
+# Load libraries
+require(tidyverse)
+require(data.table)
+require(ggplot2)
+require(gridExtra)
+require(PerformanceAnalytics)
+require(magrittr)
+# load twitter library - the rtweet library is recommended now over twitteR
+library(rtweet)
+
+```
+##### Step 1: Authenticate the app
+
+Grab app name, API key and API secret from the credentials saved in 1Password:
+ 
+```{r authenticate, echo=T}
+# whatever name you assigned to your created app
+appname <- "voc-collector"
+
+# api key (example below is not a real key)
+key <- "xsBRv4HDRFw3YRe1jg3lTWxz8"
+
+# api secret (example below is not a real key)
+secret <- "1Qf0flgv8R8Qia96SNFtJ7JjEoVsHAoNJ4gD0tDcoZDHh3ZpPi"
+
+# access_token
+access_token <- "3302721691-53elyQLaCZwWpAiCImnxBfm48mqmeLt6QqjDz2f"
+
+# access_secret
+access_secret <- "W4H4xpBLw3g6VkYrUtJEuIYaM2JQuSZZ58FKWm2m3Nq7U"
+
+# create token named "twitter_token"
+twitter_token <- create_token(
+  app = appname,
+  consumer_key = key,
+  consumer_secret = secret,
+  access_token = access_token,
+  access_secret = access_secret)
+
+
+# test that the token is stable
+test_token <- get_token()
+test_token
+```
+##### Step 2: Collect tweets by hashtag
+Gather tweets for #covid as a preliminary test:
+
+```{r get_raw_data, echo=T}
+query <- "covid"
+hashtag <- paste0("#", query)
+num_tweets <- 10000
+
+# raw_tweets <- search_tweets(q = hashtag, 
+                            # n = num_tweets)
+backup_tweets <- raw_tweets
+```
+
+```{r save_data, echo=F}
+# save to csv file using query as file name
+collapse_hashtag_list <- function(x) {
+  paste(x, collapse=" ")
+}
+
+# if a given var is a list, collapse its data into a vector: 
+
+for (i in names(raw_tweets)) {
+  
+}
+
+query_fname <- paste0(query, "_raw.csv")
+#write.table(raw_tweets, file = query_fname)
+```
+
+
+```{r explore_data, echo=T}
+# view the first 3 rows of the dataframe
+head(raw_tweets, n = 3)
+
+# get variables of the dataframe
+df_vars <- names(raw_tweets)
+
+# vars of interest: "created_at", "screen_name", "text"
+tweet_text <- raw_tweets %>%
+  dplyr::select(created_at, screen_name, text)
+```
+
+
+##### Step 3: Follow text-mining protocol
