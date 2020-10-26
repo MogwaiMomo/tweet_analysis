@@ -65,25 +65,17 @@ if (get.tweets == "y") {
   print("Saving today's data to file ...")
   date.string <- as.character(Sys.Date())
   query_file_name <- paste0(query, "_", date.string, "_tweets")
-  as_csv <- readline(prompt = "Would you like to save as CSV? (y/n): ")
-  
-  if (as_csv == "n") {
-    # save to RDS for future use
-    print("Saving as RDS ...")
-    query_file_rds <- paste0(query_file_name, ".rds")
-    saveRDS(raw_tweets, file=query_file_rds)
-    print("Done!")
-  } else {
-    print("Saving as CSV ...")
-    query_file_csv <- paste0(query_file_name, ".csv")
-    save_as_csv(raw_tweets, file=query_file_csv)
-    print("Done!")
-  }
+  print("Saving as CSV ...")
+  query_file_csv <- paste0(query_file_name, ".csv")
+  save_as_csv(raw_tweets, file_name=query_file_csv)
+  print("Done! Reading csv back in for more usable data ...")
+  rm(raw_tweets)
+  raw_tweets <- fread("covid19_2020-10-26_tweets.csv", na.strings = c("",NA))
   
 } else if(get.tweets == "n") {
-  file <- readline(prompt = "Please type the filename of the rds file you want to open: ")
+  file <- readline(prompt = "Please type the filename of the file you want to open: ")
   # Load data back in from large CSV file
-  tweets_to_mine <- readRDS(file)
+  raw_tweets <- fread(file)
   print("Done! Have fun text-mining :)")
 } else {
   print("sorry, didn't catch that.")
@@ -91,37 +83,38 @@ if (get.tweets == "y") {
 
 rm(get.tweets)
 
-
-
-
 ##### Step 3: Follow text-mining protocol
 
-# To start, work through this tutorial from Jan 2020: https://medium.com/@traffordDataLab/exploring-tweets-in-r-54f6011a193d
+# To start, work through this tutorial from Jan 2020: 
+# https://medium.com/@traffordDataLab/exploring-tweets-in-r-54f6011a193d
 
 # graph tweets by frequency over time
-
-plot1 <- ts_plot(raw_tweets, by = "hours") +
+tw_over_time <- ts_plot(raw_tweets, by = "hours") +
   geom_line(color = "red") +
   labs(x = NULL, y = NULL,
        title = "Frequency of tweets with a #covid19 hashtag",
        subtitle = paste0(format.Date(min(raw_tweets$created_at), "%d %B %Y"), " to ", format.Date(max(raw_tweets$created_at), "%d %B %Y")),
        caption = "Data collected from Twitter's REST API via rtweet") + theme_minimal()
-
-ggsave("plot1.png", width = 5, height = 5)
+ggsave("tw_over_time.png", width = 5, height = 5)
 
 # top tweets by location
-# raw_tweets %>%
-  # filter(!is.na(place_full_name)) %>% # ignore blank values
-  # count(place_full_name, sort = TRUE) %>%
-  # top_n(5)
+top5_locations <- raw_tweets %>%
+  filter(!is.na(place_full_name)) %>% # ignore blank values
+  count(place_full_name, sort = TRUE) %>%
+  top_n(5)
+save_as_csv(top5_locations, file_name="top5_locations.csv")
 
+# get top shared link (need csv read in to get the data)
+top5_shared_links <- raw_tweets %>%
+  filter(!is.na(urls_expanded_url)) %>%
+  count(urls_expanded_url, sort = TRUE) %>%
+  top_n(5)
+save_as_csv(top5_shared_links, file_name="top5_shared_links.csv")
 
-# # get top shared link
-# raw_tweets %>% 
-#   filter(!is.na(urls_expanded_url)) %>% 
-#   count(urls_expanded_url, sort = TRUE) %>% 
-#   top_n(5)
-
-
+# most retweeted tweet
+top5_retweets <- raw_tweets %>%
+  arrange(-retweet_count) %>%
+  head(5)
+save_as_csv(top5_retweets, file_name="top5_retweets.csv")
 
 
