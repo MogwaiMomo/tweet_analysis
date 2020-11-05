@@ -4,7 +4,8 @@ setwd(wd)
 # global options
 options(stringsAsFactors = F)
 # Load libraries
-require(tidyverse)
+library(tidyverse)
+library(tidytext)
 require(data.table)
 require(ggplot2)
 require(gridExtra)
@@ -16,6 +17,8 @@ library(rtweet)
 library(janitor)
 # for flattening lists
 library(purrr)
+# for embedding tweets in markdown
+library(tweetrmd)
 
 
 ##### Step 1: Authenticate the app
@@ -70,7 +73,7 @@ if (get.tweets == "y") {
   save_as_csv(raw_tweets, file_name=query_file_csv)
   print("Done! Reading csv back in for more usable data ...")
   rm(raw_tweets)
-  raw_tweets <- fread("covid19_2020-10-26_tweets.csv", na.strings = c("",NA))
+  raw_tweets <- fread(query_file_csv, na.strings = c("",NA))
   
 } else if(get.tweets == "n") {
   file <- readline(prompt = "Please type the filename of the file you want to open: ")
@@ -92,7 +95,7 @@ rm(get.tweets)
 tw_over_time <- ts_plot(raw_tweets, by = "hours") +
   geom_line(color = "red") +
   labs(x = NULL, y = NULL,
-       title = "Frequency of tweets with a #covid19 hashtag",
+       title = paste0("Frequency of tweets"),
        subtitle = paste0(format.Date(min(raw_tweets$created_at), "%d %B %Y"), " to ", format.Date(max(raw_tweets$created_at), "%d %B %Y")),
        caption = "Data collected from Twitter's REST API via rtweet") + theme_minimal()
 ggsave("tw_over_time.png", width = 5, height = 5)
@@ -117,4 +120,50 @@ top5_retweets <- raw_tweets %>%
   head(5)
 save_as_csv(top5_retweets, file_name="top5_retweets.csv")
 
+# get a screenshot of the top retweet
+top_rt <- slice(top5_retweets, 1)
+top_rt_screenshot <- tweet_screenshot(tweet_url(
+  top_rt$screen_name, 
+  str_replace(top_rt$status_id, "x", "")))
 
+# get the most liked tweet
+top5_liked_tweet <- raw_tweets %>%
+  arrange(-favorite_count) %>%
+  top_n(5, favorite_count) %>% 
+  select(created_at, screen_name, text, favorite_count)
+
+# top 5 tweeters
+top5_most_active <- raw_tweets %>%
+  count(screen_name, sort = TRUE) %>%
+  top_n(5)
+
+# top 5 related hashtags
+top5_hashtags <- raw_tweets %>%
+  unnest_tokens(hashtag, hashtags, "tweets", to_lower = TRUE) %>%
+  filter(hashtag != query) %>%
+  count(hashtag, sort = TRUE) %>%
+  top_n(5)
+  
+  
+# word cloud visualization
+library(wordcloud)
+
+words <- raw_tweets %>%
+  mutate(text = str_remove_all(text, "&amp;|&lt;|&gt;"),
+         text = str_remove_all(text, "\\s?(f|ht)(tp)(s?)(://)([^\\.]*)[\\.|/](\\S*)"),
+         text = str_remove_all(text, "[^\x01-\x7F]")) %>% 
+  unnest_tokens(word, text, token = "tweets") %>%
+  filter(!word %in% stop_words$word,
+         !word %in% str_remove_all(stop_words$word, "'"),
+         str_detect(word, "[a-z]"),
+         !str_detect(word, "^#"),         
+         !str_detect(word, "@\\S+")) %>%
+  filter(word != query) %>%
+  count(word, sort = TRUE)
+
+cloud <- words %>% 
+  with(wordcloud(word, n, random.order = FALSE, max.words = 100, colors = "#F29545"))
+
+
+# NEXT UP: Work through tidy text mining text book: https://www.tidytextmining.com/sentiment.html
+  
