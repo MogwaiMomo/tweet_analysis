@@ -105,20 +105,24 @@ top5_locations <- raw_tweets %>%
   filter(!is.na(place_full_name)) %>% # ignore blank values
   count(place_full_name, sort = TRUE) %>%
   top_n(5)
-save_as_csv(top5_locations, file_name="top5_locations.csv")
+
+location_filename <- paste0(query_file_name, "_top5_locations.csv")
+save_as_csv(top5_locations, file_name=location_filename)
 
 # get top shared link (need csv read in to get the data)
 top5_shared_links <- raw_tweets %>%
   filter(!is.na(urls_expanded_url)) %>%
   count(urls_expanded_url, sort = TRUE) %>%
   top_n(5)
-save_as_csv(top5_shared_links, file_name="top5_shared_links.csv")
+shared_filename <- paste0(query_file_name, "_top5_shared_links.csv")
+save_as_csv(top5_shared_links, file_name=shared_filename)
 
 # most retweeted tweet
 top5_retweets <- raw_tweets %>%
   arrange(-retweet_count) %>%
   head(5)
-save_as_csv(top5_retweets, file_name="top5_retweets.csv")
+retweets_filename <- paste0(query_file_name, "_top5_retweets.csv")
+save_as_csv(top5_retweets, file_name=retweets_filename)
 
 # get a screenshot of the top retweet
 top_rt <- slice(top5_retweets, 1)
@@ -161,8 +165,24 @@ words <- raw_tweets %>%
   filter(word != query) %>%
   count(word, sort = TRUE)
 
+wordcloud(words$word, words$n, random.order = FALSE, max.words = 100, color = alpha("blue", seq(0.4,1, 0.05)))
+
 cloud <- words %>% 
-  with(wordcloud(word, n, random.order = FALSE, max.words = 100, colors = "#F29545"))
+  with(wordcloud(word, n, random.order = FALSE, max.words = 100, color = alpha("blue", seq(0.4,1, 0.05))))
+
+
+# create color gradient for word cloud
+cloud_filename <- paste0(query_file_name, "_wordcloud.png")
+
+png(filename="testplot.png", 
+    width=500, 
+    height=500,
+    units="px")
+wordcloud(words$word, words$n, random.order = FALSE, max.words = 100, color = alpha("blue", seq(0.4,1, 0.05)))
+dev.off()
+
+plot(sin, -pi, 2*pi)
+
 
 
 # NEXT UP: Work through tidy text mining text book: https://www.tidytextmining.com/sentiment.html
