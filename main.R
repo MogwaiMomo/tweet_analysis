@@ -238,3 +238,6 @@ wordcloud(anger_words$word,
           color = alpha("red", seq(0.4,1, 0.05))
 )
 dev.off()
+
+
+# Next feature/challenge: See how sentiment analysis changes over time?
