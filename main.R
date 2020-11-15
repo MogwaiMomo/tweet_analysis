@@ -15,8 +15,6 @@ require(magrittr)
 library(rtweet)
 # tools for cleaning data fast
 library(janitor)
-# for flattening lists
-library(purrr)
 # for embedding tweets in markdown
 library(tweetrmd)
 
@@ -24,7 +22,7 @@ library(tweetrmd)
 ##### Step 1: Authenticate the app
 # Grab app name, API key and API secret from the credentials saved in 1Password:
   
-# whatever name you assigned to your created app
+#whatever name you assigned to your created app
 appname <- "voc-collector"
 
 # api key (example below is not a real key)
@@ -60,7 +58,7 @@ if (get.tweets == "y") {
   query <- readline(prompt = "Please type the hashtag you want to search (exclude the #): ")
   num_tweets <- as.numeric(readline(prompt = "How many tweets? (limit 18000): "))
   hashtag <- paste0("#", query)
-  raw_tweets <- search_tweets(q = hashtag, 
+  raw_tweets <- search_tweets(q = hashtag,
                               n = num_tweets,
                               include_rts = FALSE,
                               `-filter` = "replies",
@@ -74,12 +72,13 @@ if (get.tweets == "y") {
   print("Done! Reading csv back in for more usable data ...")
   rm(raw_tweets)
   raw_tweets <- fread(query_file_csv, na.strings = c("",NA))
-  
+
 } else if(get.tweets == "n") {
   file <- readline(prompt = "Please type the filename of the file you want to open: ")
   # Load data back in from large CSV file
   raw_tweets <- fread(file)
   query_file_name <- str_split(file, fixed("."), n=2)[[1]][1]
+  query <- str_split(query_file_name, "_", n=2)[[1]][1]
   print("Done! Have fun text-mining :)")
 } else {
   print("sorry, didn't catch that.")
@@ -89,7 +88,7 @@ rm(get.tweets)
 
 ##### Step 3: Follow text-mining protocol
 
-# To start, work through this tutorial from Jan 2020: 
+# To start, work through this tutorial from Jan 2020:
 # https://medium.com/@traffordDataLab/exploring-tweets-in-r-54f6011a193d
 
 # graph tweets by frequency over time
@@ -128,13 +127,13 @@ save_as_csv(top5_retweets, file_name=retweets_filename)
 # get a screenshot of the top retweet
 top_rt <- slice(top5_retweets, 1)
 top_rt_screenshot <- tweet_screenshot(tweet_url(
-  top_rt$screen_name, 
+  top_rt$screen_name,
   str_replace(top_rt$status_id, "x", "")))
 
 # get the most liked tweet
 top5_liked_tweet <- raw_tweets %>%
   arrange(-favorite_count) %>%
-  top_n(5, favorite_count) %>% 
+  top_n(5, favorite_count) %>%
   select(created_at, screen_name, text, favorite_count)
 
 # top 5 tweeters
@@ -148,19 +147,19 @@ top5_hashtags <- raw_tweets %>%
   filter(hashtag != query) %>%
   count(hashtag, sort = TRUE) %>%
   top_n(5)
-  
-  
+
+
 # word cloud visualization
 library(wordcloud)
 words <- raw_tweets %>%
   mutate(text = str_remove_all(text, "&amp;|&lt;|&gt;"),
          text = str_remove_all(text, "\\s?(f|ht)(tp)(s?)(://)([^\\.]*)[\\.|/](\\S*)"),
-         text = str_remove_all(text, "[^\x01-\x7F]")) %>% 
+         text = str_remove_all(text, "[^\x01-\x7F]")) %>%
   unnest_tokens(word, text, token = "tweets") %>%
   filter(!word %in% stop_words$word,
          !word %in% str_remove_all(stop_words$word, "'"),
          str_detect(word, "[a-z]"),
-         !str_detect(word, "^#"),         
+         !str_detect(word, "^#"),
          !str_detect(word, "@\\S+")) %>%
   filter(word != query) %>%
   count(word, sort = TRUE)
@@ -169,8 +168,8 @@ words <- raw_tweets %>%
 # create color gradient for word cloud
 cloud_filename <- paste0(query_file_name, "_wordcloud.png")
 
-png(filename=cloud_filename, 
-    width=500, 
+png(filename=cloud_filename,
+    width=500,
     height=500,
     units="px")
 wordcloud(words$word, words$n, random.order = FALSE, max.words = 100, color = alpha("blue", seq(0.4,1, 0.05)))
@@ -185,16 +184,18 @@ dev.off()
 tidy_tweets <- raw_tweets %>%
   mutate(text = str_remove_all(text, "&amp;|&lt;|&gt;"),
          text = str_remove_all(text, "\\s?(f|ht)(tp)(s?)(://)([^\\.]*)[\\.|/](\\S*)"),
-         text = str_remove_all(text, "[^\x01-\x7F]")) %>% 
+         text = str_remove_all(text, "[^\x01-\x7F]")) %>%
   unnest_tokens(word, text, token = "tweets") %>%
   filter(!word %in% stop_words$word,
          !word %in% str_remove_all(stop_words$word, "'"),
          str_detect(word, "[a-z]"),
-         !str_detect(word, "^#"),         
+         !str_detect(word, "^#"),
          !str_detect(word, "@\\S+")) %>%
   filter(word != query) %>%
   filter(word != "vote")
 
+
+# joy wordcloud from election2020
 nrc_joy <- get_sentiments("nrc") %>%
   filter(sentiment == "joy")
 
@@ -203,22 +204,20 @@ joy_words <- tidy_tweets %>%
   count(word, sort = T)
 
 # joy wordcloud from election2020
-
-png(filename="election2020_joy_words.png", 
-    width=500, 
+png(filename="election2020_joy_words.png",
+    width=500,
     height=500,
     units="px",
     res=140)
-wordcloud(joy_words$word, 
-          joy_words$n, 
-          random.order = FALSE, 
-          max.words = 200, 
+wordcloud(joy_words$word,
+          joy_words$n,
+          random.order = FALSE,
+          max.words = 200,
           color = alpha("purple", seq(0.4,1, 0.05))
           )
 dev.off()
 
 # anger wordcloud from election2020
-
 nrc_anger <- get_sentiments("nrc") %>%
   filter(sentiment == "anger")
 
@@ -226,15 +225,15 @@ anger_words <- tidy_tweets %>%
   inner_join(nrc_anger) %>%
   count(word, sort = T)
 
-png(filename="election2020_anger_words.png", 
-    width=500, 
+png(filename="election2020_anger_words.png",
+    width=500,
     height=500,
     units="px",
     res=140)
-wordcloud(anger_words$word, 
-          anger_words$n, 
-          random.order = FALSE, 
-          max.words = 200, 
+wordcloud(anger_words$word,
+          anger_words$n,
+          random.order = FALSE,
+          max.words = 200,
           color = alpha("red", seq(0.4,1, 0.05))
 )
 dev.off()
