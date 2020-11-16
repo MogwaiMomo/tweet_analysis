@@ -247,6 +247,7 @@ dev.off()
 
 source("get_tweets.R", local=TRUE)
 
-pull_tweets_last_7_days("election2020")
+pull_tweets("election2020")
+
 
 
