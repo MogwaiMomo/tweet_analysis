@@ -239,32 +239,15 @@ wordcloud(anger_words$word,
 dev.off()
 
 
-# Next challenge: Pull tweets from specific dates
+# Question: How has the sentiment analysis of a given hashtag changed over multiple days?
+
+# Task Workflow
+
+# 1. Collect tweets over a specific period of time
+
+source("get_tweets.R", local=TRUE)
+
+pull_tweets("election2020")
 
 
 
-pull_tweets_by_date <- function(x) {
-  
-# Users are instead encouraged to breakup data retrieval into smaller chunks by
-# leveraging retryonratelimit and then using the status_id of the oldest tweet
-# as the max_id to resume searching where the previous efforts left off.
-  query <- readline(prompt = "Please type the hashtag you want to search (exclude the #): ")
-  hashtag <- paste0("#", query)
-  raw_tweets <- search_tweets(q = hashtag,
-                              include_rts = FALSE,
-                              `-filter` = "replies",
-                              lang = "en",
-                              # max_id = last_tweet,
-                              )
-  print("Saving today's data to file ...")
-  date.string <- as.character(Sys.Date())
-  query_file_name <- paste0(query, "_", date.string, "_tweets")
-  print("Saving as CSV ...")
-  query_file_csv <- paste0(query_file_name, ".csv")
-  save_as_csv(raw_tweets, file_name=query_file_csv)
-  print("Done! Reading csv back in for more usable data ...")
-  rm(raw_tweets)
-  raw_tweets <- fread(query_file_csv, na.strings = c("",NA))
-  
-  
-}
