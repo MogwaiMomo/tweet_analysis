@@ -18,17 +18,12 @@ pull_tweets <- function(query) {
                               max_id = last_status_id
                               )
     print("Step 1 Done! Next ...")
+    last_status_id <- str_remove(data[nrow(data),]$status_id, "x")
+    last_date <- str_split(data[nrow(data),]$created_at, " ")[[1]][1]
     # append collected data iteration to final set
     final_data <- rbind(final_data, data)
     
-    print("Step 2 Done! Next ...")
-    last_status_id <- str_remove(final_data[nrow(final_data)]$status_id, "x")
-    
-    print("Step 3 Done! Next ...")
-    
-    df_date <- str_split(final_data[nrow(final_data)]$created_at, " ")[[1]][1]
-    print("Step 4 Done! Next ...")
-    if (df_date == end_date) {
+    if (last_date == end_date) {
       break
     }
   }
@@ -40,5 +35,5 @@ pull_tweets <- function(query) {
   save_as_csv(final_data, file_name=query_file_csv)
   print("Done! Reading csv back in for more usable data ...")
   rm(final_data)
-  raw_tweets <- fread(query_file_csv, na.strings = c("",NA))
+  final_data <- fread(query_file_csv, na.strings = c("",NA))
 }

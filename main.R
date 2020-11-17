@@ -245,7 +245,7 @@ dev.off()
 
 # 1. Collect tweets over a specific period of time
 
-source("get_tweets.R", local=TRUE)
+source("get_tweets.R")
 
 pull_tweets("election2020")
 
