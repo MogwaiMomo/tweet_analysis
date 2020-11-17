@@ -17,21 +17,28 @@ pull_tweets <- function(query) {
                               retryonratelimit = TRUE,
                               max_id = last_status_id
                               )
-    last_status_id <- str_remove(data[nrow(data)]$status_id, "x")
-    # append latest data iteration to final set
+    print("Step 1 Done! Next ...")
+    # append collected data iteration to final set
     final_data <- rbind(final_data, data)
-    df_date <- str_split(data[nrow(data)]$created_at, " ")[[1]][1]
+    
+    print("Step 2 Done! Next ...")
+    last_status_id <- str_remove(final_data[nrow(final_data)]$status_id, "x")
+    
+    print("Step 3 Done! Next ...")
+    
+    df_date <- str_split(final_data[nrow(final_data)]$created_at, " ")[[1]][1]
+    print("Step 4 Done! Next ...")
     if (df_date == end_date) {
       break
     }
   }
   
   date.string <- as.character(Sys.Date())
-  query_file_name <- paste0(query, "_", date.string, "_to_", end_date, "_tweets")
+  query_file_name <- paste0(query, "_", end_date, "_to_", date.string,   "_tweets")
   print("Saving as CSV ...")
   query_file_csv <- paste0(query_file_name, ".csv")
-  save_as_csv(raw_tweets, file_name=query_file_csv)
+  save_as_csv(final_data, file_name=query_file_csv)
   print("Done! Reading csv back in for more usable data ...")
-  rm(raw_tweets)
+  rm(final_data)
   raw_tweets <- fread(query_file_csv, na.strings = c("",NA))
 }
