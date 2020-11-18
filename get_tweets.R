@@ -4,7 +4,7 @@ pull_tweets <- function(query) {
   hashtag <- paste0("#", query)
   
   # initial pre-loop conditions
-  end_date <- Sys.Date() - 7
+  end_date <- Sys.Date() - 2
   last_status_id <-  NULL
   final_data <- data.frame()
 
