@@ -33,15 +33,3 @@ pull_max_tweets <- function(query, end_date) {
     }
   }
 }
-
-
-
-
-# date.string <- as.character(Sys.Date())
-# query_file_name <- paste0(query, "_", end_date, "_to_", date.string,   "_tweets")
-# print("Saving as CSV ...")
-# query_file_csv <- paste0(query_file_name, ".csv")
-# save_as_csv(final_data, file_name=query_file_csv)
-# print("Done! Reading csv back in for more usable data ...")
-# rm(final_data)
-# final_data <- fread(query_file_csv, na.strings = c("",NA))
