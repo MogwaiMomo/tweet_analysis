@@ -1,14 +1,15 @@
 # Get as many tweets of a given hashtag as possible from the last week. (May time out due to too many tweets.)
-pull_max_tweets <- function(query, days_back) {
+pull_max_tweets <- function(query, end_date) {
   hashtag <- paste0("#", query)
   
   # initial pre-loop conditions
-  end_date <- Sys.Date() - days_back
   last_status_id <-  NULL
   final_data <- data.frame()
-
+  x <- 0
   # loop through for as many days as is permitted
   repeat {
+    x <- x + 1
+    print(paste0("Starting Round ", x, " ..."))
     data <- search_tweets(q = hashtag,
                               include_rts = FALSE,
                               `-filter` = "replies",
@@ -16,13 +17,17 @@ pull_max_tweets <- function(query, days_back) {
                               retryonratelimit = TRUE,
                               max_id = last_status_id
                               )
-    print("Step 1 Done! Next ...")
+    print(paste0("Done pulling tweets for Round ", x, " ..." ))
     last_status_id <- str_remove(data[nrow(data),]$status_id, "x")
+    print(paste0("Last id: ", last_status_id, " ..." ))
     last_date <- str_split(data[nrow(data),]$created_at, " ")[[1]][1]
+    print(paste0("Last date: ", last_date, " ..." ))
+    loop_result <- isTRUE(last_date <= end_date)
+    print(loop_result)
     # append collected data iteration to final set
     final_data <- rbind(final_data, data)
-    
-    if (last_date == end_date) {
+    print(paste0("Done Round ", x, " ..."))
+    if (last_date <= end_date) {
       return(final_data)
       break
     }

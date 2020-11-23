@@ -11,7 +11,7 @@ require(ggplot2)
 require(gridExtra)
 require(PerformanceAnalytics)
 require(magrittr)
-# load twitter library - the rtweet library is recommended now over twitteR
+# load twitter library
 library(rtweet)
 # tools for cleaning data fast
 library(janitor)
@@ -19,7 +19,11 @@ library(janitor)
 library(tweetrmd)
 
 source("app_authentication.R")
+source("get_tweets.R")
 
+
+end_date <- "2020-11-20"
+tweets <- pull_max_tweets("election2020", end_date)
 
 
 
@@ -211,15 +215,6 @@ wordcloud(anger_words$word,
 dev.off()
 
 
-# Question: How has the sentiment analysis of a given hashtag changed over multiple days?
-
-# Task Workflow
-
-# 1. Collect tweets over a specific period of time
-
-source("get_tweets.R")
-
-pull_max_tweets("election2020")
 
 
 
