@@ -20,8 +20,7 @@ library(tweetrmd)
 
 source("app_authentication.R")
 
-# uncomment to test that the token is stable:
-# test_token
+
 
 
 ##### Step 2: Collect tweets by hashtag
@@ -220,7 +219,7 @@ dev.off()
 
 source("get_tweets.R")
 
-pull_tweets("election2020")
+pull_max_tweets("election2020")
 
 
 
