@@ -18,6 +18,7 @@ source("app_authentication.R")
 source("get_tweets.R")
 source("top_5_analysis.R")
 source("create_wordcloud.R")
+source("tidy_tokens.R")
 
 # authenticate twitter
 authenticate_twitter()
@@ -38,22 +39,13 @@ tweets <- fread(query_file_name, na.strings = c("",NA))
 # get Top 5 summary tables
 top5_summaries(tweets, query_file_name)
 
+# create tidy tokens for analysis
+omit_words <- c(query, "vote")
+tidy_tweets <- create_tidy_tokens(tweets, omit_words)
 
 
-# Step 1: Create a sentiment analysis
+ 
 
-tidy_tweets <- tweets %>%
-  mutate(text = str_remove_all(text, "&amp;|&lt;|&gt;"),
-         text = str_remove_all(text, "\\s?(f|ht)(tp)(s?)(://)([^\\.]*)[\\.|/](\\S*)"),
-         text = str_remove_all(text, "[^\x01-\x7F]")) %>%
-  unnest_tokens(word, text, token = "tweets") %>%
-  filter(!word %in% stop_words$word,
-         !word %in% str_remove_all(stop_words$word, "'"),
-         str_detect(word, "[a-z]"),
-         !str_detect(word, "^#"),
-         !str_detect(word, "@\\S+")) %>%
-  filter(word != query) %>%
-  filter(word != "vote")
 
 
 # joy wordcloud from election2020
@@ -91,6 +83,7 @@ png(filename="election2020_anger_words.png",
     height=500,
     units="px",
     res=140)
+
 wordcloud(anger_words$word,
           anger_words$n,
           random.order = FALSE,
