@@ -3,7 +3,6 @@ setwd(wd)
 
 # global options
 options(stringsAsFactors = F)
-# Load libraries
 library(tidyverse)
 library(tidytext)
 require(data.table)
@@ -11,64 +10,34 @@ require(ggplot2)
 require(gridExtra)
 require(PerformanceAnalytics)
 require(magrittr)
-# load twitter library
 library(rtweet)
-# tools for cleaning data fast
 library(janitor)
-# for embedding tweets in markdown
 library(tweetrmd)
 
 source("app_authentication.R")
 source("get_tweets.R")
 source("top_5_analysis.R")
+source("create_wordcloud.R")
+
+# authenticate twitter
+authenticate_twitter()
 
 # get tweets for multiple days back
 query <- "election2020"
-end_date <- "2020-11-20" # how far back you want to go in time
+end_date <- "2020-11-18" # how far back you want to go in time
 tweets <- pull_max_tweets(query, end_date)
 
-# save to file
+# save tweets to file
 date.string <- as.character(Sys.Date())
 query_file_name <- paste0(query, "_", end_date, "_to_", date.string, "_tweets.csv")
 save_as_csv(tweets, file_name=query_file_name)
 
-# load data
-input_file <- "election2020_2020-11-20_to_2020-11-23_tweets.csv" # "<ENTER HERE>"
-tweets <- fread(input_file, na.strings = c("",NA))
+# load back in for clean processing
+tweets <- fread(query_file_name, na.strings = c("",NA))
 
-# get "top 5" tables
-source("top_5_analysis.R")
+# get Top 5 summary tables
+top5_summaries(tweets, query_file_name)
 
-
-
-# word cloud visualization
-library(wordcloud)
-words <- tweets %>%
-  mutate(text = str_remove_all(text, "&amp;|&lt;|&gt;"),
-         text = str_remove_all(text, "\\s?(f|ht)(tp)(s?)(://)([^\\.]*)[\\.|/](\\S*)"),
-         text = str_remove_all(text, "[^\x01-\x7F]")) %>%
-  unnest_tokens(word, text, token = "tweets") %>%
-  filter(!word %in% stop_words$word,
-         !word %in% str_remove_all(stop_words$word, "'"),
-         str_detect(word, "[a-z]"),
-         !str_detect(word, "^#"),
-         !str_detect(word, "@\\S+")) %>%
-  filter(word != query) %>%
-  count(word, sort = TRUE)
-
-
-# create color gradient for word cloud
-cloud_filename <- paste0(query_file_name, "_wordcloud.png")
-
-png(filename=cloud_filename,
-    width=500,
-    height=500,
-    units="px")
-wordcloud(words$word, words$n, random.order = FALSE, max.words = 100, color = alpha("blue", seq(0.4,1, 0.05)))
-dev.off()
-
-
-# NEXT UP: Work through tidy text mining text book: https://www.tidytextmining.com/sentiment.html
 
 
 # Step 1: Create a sentiment analysis
