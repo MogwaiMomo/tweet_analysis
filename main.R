@@ -13,7 +13,6 @@ require(magrittr)
 library(rtweet)
 library(janitor)
 library(tweetrmd)
-
 source("app_authentication.R")
 source("get_tweets.R")
 source("top_5_analysis.R")
