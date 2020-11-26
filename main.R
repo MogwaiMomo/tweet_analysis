@@ -36,12 +36,14 @@ save_as_csv(tweets, file_name=query_file_name)
 # load back in for clean processing
 tweets <- fread(query_file_name, na.strings = c("",NA))
 
+tweets <- fread("election2020_2020-11-18_to_2020-11-24_tweets.csv", na.strings = c("",NA))
+
 # get Top 5 summary tables
 top5_summaries(tweets, query_file_name)
 
 # create tidy tokens for analysis
 omit_words <- c(query, "vote")
-tidy_tweets <- create_tidy_tokens(tweets, omit_words)
+tidy_tweets <- create_tidy_tokens(tweets, "text", omit_words)
 
 
 # joy wordcloud from election2020

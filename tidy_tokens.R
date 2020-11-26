@@ -1,4 +1,4 @@
-create_tidy_tokens <- function(df, omit_words) {
+create_tidy_tokens <- function(df, text, omit_words) {
   tidy_tweets <- df %>%
     mutate(text = str_remove_all(text, "&amp;|&lt;|&gt;"),
            text = str_remove_all(text, "\\s?(f|ht)(tp)(s?)(://)([^\\.]*)[\\.|/](\\S*)"),
