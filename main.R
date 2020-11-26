@@ -44,10 +44,6 @@ omit_words <- c(query, "vote")
 tidy_tweets <- create_tidy_tokens(tweets, omit_words)
 
 
- 
-
-
-
 # joy wordcloud from election2020
 nrc_joy <- get_sentiments("nrc") %>%
   filter(sentiment == "joy")
