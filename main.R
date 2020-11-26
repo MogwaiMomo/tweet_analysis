@@ -32,10 +32,10 @@ tweets <- pull_max_tweets(query, end_date)
 date.string <- as.character(Sys.Date())
 query_file_name <- paste0(query, "_", end_date, "_to_", date.string, "_tweets.csv")
 save_as_csv(tweets, file_name=query_file_name)
-
 # load back in for clean processing
 tweets <- fread(query_file_name, na.strings = c("",NA))
 
+# or load a specific file for work
 tweets <- fread("election2020_2020-11-18_to_2020-11-24_tweets.csv", na.strings = c("",NA))
 
 # get Top 5 summary tables
@@ -44,7 +44,6 @@ top5_summaries(tweets, query_file_name)
 # create tidy tokens for analysis
 omit_words <- c(query, "vote")
 tidy_tweets <- create_tidy_tokens(tweets, "text", omit_words)
-
 
 # joy wordcloud from election2020
 nrc_joy <- get_sentiments("nrc") %>%
@@ -55,18 +54,22 @@ joy_words <- tidy_tweets %>%
   count(word, sort = T)
 
 # joy wordcloud from election2020
-png(filename="election2020_joy_words.png",
-    width=500,
-    height=500,
-    units="px",
-    res=140)
-wordcloud(joy_words$word,
-          joy_words$n,
-          random.order = FALSE,
-          max.words = 200,
-          color = alpha("purple", seq(0.4,1, 0.05))
-          )
-dev.off()
+create_wordcloud(joy_words, "election2020_joy_words.png")
+
+
+# png(filename="election2020_joy_words.png",
+#     width=500,
+#     height=500,
+#     units="px",
+#     res=140)
+# 
+# wordcloud(joy_words$word,
+#           joy_words$n,
+#           random.order = FALSE,
+#           max.words = 200,
+#           color = alpha("purple", seq(0.4,1, 0.05))
+#           )
+# dev.off()
 
 # anger wordcloud from election2020
 nrc_anger <- get_sentiments("nrc") %>%

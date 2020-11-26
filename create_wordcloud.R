@@ -1,7 +1,8 @@
 # word cloud visualization
 library(wordcloud)
-create_wordcloud <- function (tweets, query_file_name) {
-  words <- tweets %>%
+create_wordcloud <- function (df, output_filename) {
+  
+  words <- df %>%
     mutate(text = str_remove_all(text, "&amp;|&lt;|&gt;"),
            text = str_remove_all(text, "\\s?(f|ht)(tp)(s?)(://)([^\\.]*)[\\.|/](\\S*)"),
            text = str_remove_all(text, "[^\x01-\x7F]")) %>%
@@ -23,6 +24,7 @@ create_wordcloud <- function (tweets, query_file_name) {
       height=500,
       units="px")
   wordcloud(words$word, words$n, random.order = FALSE, max.words = 100, color = alpha("blue", seq(0.4,1, 0.05)))
+  
   dev.off()
 }
 
