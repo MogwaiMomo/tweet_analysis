@@ -1,9 +1,8 @@
 # word cloud visualization
-library(wordcloud)
 create_wordcloud <- function (tidy_df, output_filename) {
 
-  words <- tidy_df %>%
-    count(word, sort = TRUE)
+  # words <- tidy_df %>%
+  #   count(word, sort = TRUE)
   
   png(filename=output_filename,
       width=500,
@@ -20,4 +19,21 @@ create_wordcloud <- function (tidy_df, output_filename) {
   
   dev.off()
 }
+
+
+
+
+# png(filename="election2020_joy_words_B.png",
+#     width=500,
+#     height=500,
+#     units="px",
+#     res=140)
+# 
+# wordcloud(joy_words$word,
+#           joy_words$n,
+#           random.order = FALSE,
+#           max.words = 200,
+#           color = alpha("purple", seq(0.4,1, 0.05))
+# )
+# dev.off()
 
