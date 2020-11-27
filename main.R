@@ -56,21 +56,9 @@ joy_words <- tidy_tweets %>%
   count(word, sort = T)
 
 # joy wordcloud from election2020
-create_wordcloud(joy_words, "election2020_joy_words.png")
+create_wordcloud(joy_words, "election2020_joy_words_C.png")
 
-png(filename="election2020_joy_words_B.png",
-    width=500,
-    height=500,
-    units="px",
-    res=140)
 
-wordcloud(joy_words$word,
-          joy_words$n,
-          random.order = FALSE,
-          max.words = 200,
-          color = alpha("purple", seq(0.4,1, 0.05))
-          )
-dev.off()
 
 # anger wordcloud from election2020
 nrc_anger <- get_sentiments("nrc") %>%
