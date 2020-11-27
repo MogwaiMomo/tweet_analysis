@@ -1,10 +1,6 @@
 # word cloud visualization
-library(wordcloud)
-create_wordcloud <- function (tidy_df, output_filename) {
+create_wordcloud <- function (words, output_filename) {
 
-  words <- tidy_df %>%
-    count(word, sort = TRUE)
-  
   png(filename=output_filename,
       width=500,
       height=500,
