@@ -35,7 +35,9 @@ save_as_csv(tweets, file_name=query_file_name)
 tweets <- fread(query_file_name, na.strings = c("",NA))
 
 # or load a specific file for work
-tweets <- fread("election2020_2020-11-18_to_2020-11-24_tweets.csv", na.strings = c("",NA))
+file <- "election2020_2020-11-18_to_2020-11-24_tweets.csv"
+tweets <- fread(file, na.strings = c("",NA))
+query <- str_split(file, "_")[[1]][1]
 
 # get Top 5 summary tables
 top5_summaries(tweets, query_file_name)
@@ -55,20 +57,19 @@ joy_words <- tidy_tweets %>%
 # joy wordcloud from election2020
 create_wordcloud(joy_words, "election2020_joy_words.png")
 
+png(filename="election2020_joy_words_B.png",
+    width=500,
+    height=500,
+    units="px",
+    res=140)
 
-# png(filename="election2020_joy_words.png",
-#     width=500,
-#     height=500,
-#     units="px",
-#     res=140)
-# 
-# wordcloud(joy_words$word,
-#           joy_words$n,
-#           random.order = FALSE,
-#           max.words = 200,
-#           color = alpha("purple", seq(0.4,1, 0.05))
-#           )
-# dev.off()
+wordcloud(joy_words$word,
+          joy_words$n,
+          random.order = FALSE,
+          max.words = 200,
+          color = alpha("purple", seq(0.4,1, 0.05))
+          )
+dev.off()
 
 # anger wordcloud from election2020
 nrc_anger <- get_sentiments("nrc") %>%
