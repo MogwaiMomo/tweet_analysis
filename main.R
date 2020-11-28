@@ -60,27 +60,6 @@ create_wordcloud(joy_words, "election2020_joy_words_C.png")
 
 
 
-# anger wordcloud from election2020
-nrc_anger <- get_sentiments("nrc") %>%
-  filter(sentiment == "anger")
-
-anger_words <- tidy_tweets %>%
-  inner_join(nrc_anger) %>%
-  count(word, sort = T)
-
-png(filename="election2020_anger_words.png",
-    width=500,
-    height=500,
-    units="px",
-    res=140)
-
-wordcloud(anger_words$word,
-          anger_words$n,
-          random.order = FALSE,
-          max.words = 200,
-          color = alpha("red", seq(0.4,1, 0.05))
-)
-dev.off()
 
 
 
