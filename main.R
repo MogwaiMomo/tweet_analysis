@@ -56,7 +56,7 @@ joy_words <- tidy_tweets %>%
   count(word, sort = T)
 
 # joy wordcloud from election2020
-create_wordcloud(joy_words, "election2020_joy_words_C.png")
+create_wordcloud(joy_words, "election2020_joy_words.png")
 
 
 
