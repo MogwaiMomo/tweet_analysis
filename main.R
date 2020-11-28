@@ -55,6 +55,10 @@ anger_words <- get_sentiments_words(tweets, omit_words, "nrc", "anger")
 create_wordcloud(anger_words, "output/election2020_anger_words.png")
 
 
+# Generate nrc sentiment analysis - disgust
+omit_words <- c(query, "vote") # adjust as needed
+anger_words <- get_sentiments_words(tweets, omit_words, "nrc", "disgust")
+create_wordcloud(anger_words, "output/election2020_disgust_words.png")
 
 
 
