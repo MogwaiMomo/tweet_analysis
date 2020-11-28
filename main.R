@@ -19,6 +19,7 @@ source("get_tweets.R")
 source("top_5_analysis.R")
 source("create_wordcloud.R")
 source("tidy_tokens.R")
+source("sentiment_analysis.R")
 
 # authenticate twitter
 authenticate_twitter()
@@ -30,58 +31,34 @@ tweets <- pull_max_tweets(query, end_date)
 
 # save tweets to file
 date.string <- as.character(Sys.Date())
-query_file_name <- paste0(query, "_", end_date, "_to_", date.string, "_tweets.csv")
+query_file_name <- paste0("data/", query, "_", end_date, "_to_", date.string, "_tweets.csv")
 save_as_csv(tweets, file_name=query_file_name)
 # load back in for clean processing
 tweets <- fread(query_file_name, na.strings = c("",NA))
 
 # or load a specific file for work
-file <- "election2020_2020-11-18_to_2020-11-24_tweets.csv"
+file <- "data/election2020_2020-11-18_to_2020-11-24_tweets.csv"
 tweets <- fread(file, na.strings = c("",NA))
 query <- str_split(file, "_")[[1]][1]
 
-# get Top 5 summary tables
+# Get Top 5 summary tables 
 top5_summaries(tweets, query_file_name)
 
-# create tidy tokens for analysis
-omit_words <- c(query, "vote")
-tidy_tweets <- create_tidy_tokens(tweets, "text", omit_words)
+# Generate nrc sentiment analysis - joy
+omit_words <- c(query, "vote") # adjust as needed
+joy_words <- get_sentiments_words(tweets, omit_words, "nrc", "joy")
+create_wordcloud(joy_words, "output/election2020_joy_words.png")
 
-# joy wordcloud from election2020
-nrc_joy <- get_sentiments("nrc") %>%
-  filter(sentiment == "joy")
-
-joy_words <- tidy_tweets %>%
-  inner_join(nrc_joy) %>%
-  count(word, sort = T)
-
-# joy wordcloud from election2020
-create_wordcloud(joy_words, "election2020_joy_words_C.png")
+# Generate nrc sentiment analysis - anger
+omit_words <- c(query, "vote", "fraud") # adjust as needed
+anger_words <- get_sentiments_words(tweets, omit_words, "nrc", "anger")
+create_wordcloud(anger_words, "output/election2020_anger_words.png")
 
 
-
-# anger wordcloud from election2020
-nrc_anger <- get_sentiments("nrc") %>%
-  filter(sentiment == "anger")
-
-anger_words <- tidy_tweets %>%
-  inner_join(nrc_anger) %>%
-  count(word, sort = T)
-
-png(filename="election2020_anger_words.png",
-    width=500,
-    height=500,
-    units="px",
-    res=140)
-
-wordcloud(anger_words$word,
-          anger_words$n,
-          random.order = FALSE,
-          max.words = 200,
-          color = alpha("red", seq(0.4,1, 0.05))
-)
-dev.off()
-
+# Generate nrc sentiment analysis - disgust
+omit_words <- c(query, "vote") # adjust as needed
+anger_words <- get_sentiments_words(tweets, omit_words, "nrc", "disgust")
+create_wordcloud(anger_words, "output/election2020_disgust_words.png")
 
 
 
