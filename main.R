@@ -56,13 +56,9 @@ omit_words <- c(query, "vote", "fraud") # adjust as needed
 anger_words <- get_sentiments_words(tweets, omit_words, "nrc", "anger")
 create_wordcloud(anger_words, "output/election2020_anger_words.png")
 
-
 # Generate sentiment analysis with AFINN
-omit_words <- c(query, "vote") # adjust as needed
-disgust_words <- get_sentiments_words(tweets, omit_words, "afinn")
-
-
-# create_wordcloud(anger_words, "output/election2020_disgust_words.png")
+afinn_words <- get_sentiments_words(tweets, omit_words, "afinn", "negative")
+create_wordcloud(afinn_words, "output/election2020_afinn_neg_words.png")
 
 
 
