@@ -12,7 +12,6 @@ get_sentiments_words <- function(text_df, omit_words, lexicon, emotion){
       sentiment_words <- tidy_tweets %>%
         inner_join(sent_dataset) %>%
         count(word, sort = T)
-      
       return(sentiment_words)
       
     } else if (emotion == "negative") {
@@ -25,8 +24,6 @@ get_sentiments_words <- function(text_df, omit_words, lexicon, emotion){
       
       return(sentiment_words)
     }
-
-    
   } else {
     sent_dataset <- get_sentiments(lexicon) %>%
       filter(sentiment == emotion)
@@ -38,4 +35,38 @@ get_sentiments_words <- function(text_df, omit_words, lexicon, emotion){
     return(sentiment_words)
   }
 }  
+
+# function for clustering by sentiment using sentimentR (sentence-level analysis)
+
+# https://cran.r-project.org/web/packages/sentimentr/readme/README.html#preferred-workflow
+
+library("sentimentr")
+tweets %>% 
+  get_sentences() %>%
+  sentiment() -> tweets
+
+# interesting questions for analysis
+
+# what proportion of tweets (element_id) are positive? Negative?
+
+  # get sentiment_by element_id to score each tweet
+
+  tweets %>%
+    sentiment_by(element_id) # WHY DOES IT SAY ELEMENT_ID NOT FOUND?
+  # %>%
+    # mutate(pos_neg = ifelse())-> sent_by_tweets
+    
+
+  # group df by new var (pos_neg) 
+
+  # count pos and neg tweets, divide by total
+
+
+  
+  
+
+
+  
+
+
 
