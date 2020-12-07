@@ -31,17 +31,23 @@ end_date <- "2020-11-18" # how far back you want to go in time
 date.string <- as.character(Sys.Date())
 query_file_name <- paste0(output_path, query, "_", end_date, "_to_", date.string, "_tweets.csv")
 
-# save tweets to file
+# load a specific file for work
+file <- "data/election2020_2020-11-18_to_2020-11-24_tweets.csv"
+tweets <- fread(file, na.strings = c("",NA))
+query <- str_split(file, "_")[[1]][1] %>%
+  str_replace("data/", "")
+
+# take only cols of interest for text-mining analysis
+tweets %>% 
+  select(c(1:5,13,14,17,78,83,84)) -> final_tweets
+
+# or pull fresh tweets and save to file
 tweets <- pull_max_tweets(query, end_date)
 save_as_csv(tweets, file_name=query_file_name)
 # load back in for clean processing
 tweets <- fread(query_file_name, na.strings = c("",NA))
 
-# or load a specific file for work
-file <- "data/election2020_2020-11-18_to_2020-11-24_tweets.csv"
-tweets <- fread(file, na.strings = c("",NA))
-query <- str_split(file, "_")[[1]][1] %>%
-  str_replace("data/", "")
+
 
 # Get Top 5 summary tables 
 top5_summaries(tweets, query_file_name)

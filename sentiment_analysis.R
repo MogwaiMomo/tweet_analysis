@@ -42,8 +42,10 @@ get_sentiments_words <- function(text_df, omit_words, lexicon, emotion){
 
 library("sentimentr")
 tweets %>% 
-  get_sentences() %>%
-  sentiment() -> tweets
+  get_sentences() -> tweets # assign sentiment by sentence element
+
+
+%>% sentiment() -> tweets # assigns sentiment to each sentence element
 
 # interesting questions for analysis
 
@@ -52,7 +54,7 @@ tweets %>%
   # get sentiment_by element_id to score each tweet
 
   tweets %>%
-    sentiment_by(element_id) # WHY DOES IT SAY ELEMENT_ID NOT FOUND?
+    sentiment_by("element_id") -> tweets # WHY DOES IT SAY ELEMENT_ID NOT FOUND?
   # %>%
     # mutate(pos_neg = ifelse())-> sent_by_tweets
     
