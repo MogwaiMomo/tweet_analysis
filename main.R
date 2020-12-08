@@ -21,8 +21,6 @@ source("create_wordcloud.R")
 source("tidy_tokens.R")
 source("sentiment_analysis.R")
 
-# authenticate twitter
-authenticate_twitter()
 
 # define necessary string vars
 output_path <- "data/"
@@ -36,12 +34,34 @@ file <- "data/election2020_2020-11-18_to_2020-11-24_tweets.csv"
 tweets <- fread(file, na.strings = c("",NA))
 query <- str_split(file, "_")[[1]][1] %>%
   str_replace("data/", "")
+
 # take only cols of interest for text-mining analysis
 tweets %>% 
   select(c(1:5,13,14,17,78,83,84)) -> tweets
 
+# get sentiment analysis
+sa_tweets <- document_level_sa(tweets)
+
+
+### Interesting questions for analysis
+
+# Step 1 - check structure
+
+dim(sa_tweets)
+str(sa_tweets)
+
+# What is the overall distribution of sentiment for this sample? Is it negative or positive? 
+
+
+
+
+
+
 
 # or pull fresh tweets and save to file
+
+# authenticate twitter
+authenticate_twitter()
 tweets <- pull_max_tweets(query, end_date)
 save_as_csv(tweets, file_name=query_file_name)
 # load back in for clean processing
