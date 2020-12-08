@@ -1,3 +1,5 @@
+library("sentimentr")
+
 # sentiment analysis
 get_sentiments_words <- function(text_df, omit_words, lexicon, emotion){
   # create tidy tokens for analysis
@@ -40,26 +42,23 @@ get_sentiments_words <- function(text_df, omit_words, lexicon, emotion){
 
 # https://cran.r-project.org/web/packages/sentimentr/readme/README.html#preferred-workflow
 
-library("sentimentr")
+
+# calculate sentiment for each tweet 
 tweets %>% 
   get_sentences() %>%
-  sentiment() -> tweets
+  sentiment_by(by = 'element_id') -> sent_by_tweet # assign sentiment by sentence element
 
-# interesting questions for analysis
+# outer-join tweets with sent by tweet
+tweets %>%
+  full_join(sent_by_tweet, by = 'element_id') -> full_tweets
 
-# what proportion of tweets (element_id) are positive? Negative?
 
-  # get sentiment_by element_id to score each tweet
 
-  tweets %>%
-    sentiment_by(element_id) # WHY DOES IT SAY ELEMENT_ID NOT FOUND?
-  # %>%
-    # mutate(pos_neg = ifelse())-> sent_by_tweets
-    
+# Interesting questions for analysis
 
-  # group df by new var (pos_neg) 
+# what proportion of tweets (element_id) are positive? neutral? negative?
 
-  # count pos and neg tweets, divide by total
+
 
 
   
