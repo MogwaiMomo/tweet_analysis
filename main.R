@@ -52,38 +52,68 @@ str(sa_tweets)
 
 # What is the overall distribution of sentiment for this sample? Is it negative or positive? 
 
+## DATAVIZ TEMPLATE
+
+# ggplot (data = <DATA> ) +
+#   <GEOM_FUNCTION> (mapping = aes( <MAPPINGS> ),
+#                    stat = <STAT> , position = <POSITION> ) +
+#   <COORDINATE_FUNCTION> +
+#   <FACET_FUNCTION> +
+#   <SCALE_FUNCTION> +
+#   <THEME_FUNCTION>
+
+# Visual inspection for normality:
+
+sent_p1 <- ggplot(sa_tweets, aes(ave_sentiment)) +
+  geom_histogram() +
+  stat_bin(bins = 50)
+sent_p1
+
+
+
+# Significance test for normally (H0 = is normal)
+
+# get a smaller representation for shapiro test (5000 max)
+shap_sample <- sample_n(sa_tweets, 100)
+
+sent_p2 <- ggplot(shap_sample, aes(ave_sentiment)) +
+  geom_histogram() +
+  stat_bin(bins = 50)
+sent_p2
+
+shapiro.test(shap_sample$ave_sentiment)
+
+
+# Calculate the average sent score of tweet sample
+
+sent_stats <- summary(sa_tweets$ave_sentiment)
+mean <- sent_stats[[4]] # slightly neg
 
 
 
 
 
+# pull fresh tweets and save to file
 
-# or pull fresh tweets and save to file
-
-# authenticate twitter
-authenticate_twitter()
-tweets <- pull_max_tweets(query, end_date)
-save_as_csv(tweets, file_name=query_file_name)
-# load back in for clean processing
-tweets <- fread(query_file_name, na.strings = c("",NA))
+# # authenticate twitter
+# authenticate_twitter()
+# tweets <- pull_max_tweets(query, end_date)
+# save_as_csv(tweets, file_name=query_file_name)
+# # load back in for clean processing
+# tweets <- fread(query_file_name, na.strings = c("",NA))
 
 
 # Get Top 5 summary tables 
-top5_summaries(tweets, query_file_name)
+#top5_summaries(tweets, query_file_name)
 
-# Generate nrc sentiment analysis - joy
-omit_words <- c(query, "vote") # adjust as needed
-joy_words <- get_sentiments_words(tweets, omit_words, "nrc", "joy")
-create_wordcloud(joy_words, "output/election2020_joy_words.png")
-
-# Generate nrc sentiment analysis - anger
-omit_words <- c(query, "vote", "fraud") # adjust as needed
-anger_words <- get_sentiments_words(tweets, omit_words, "nrc", "anger")
-create_wordcloud(anger_words, "output/election2020_anger_words.png")
-
-# Generate sentiment analysis with AFINN
-afinn_words <- get_sentiments_words(tweets, omit_words, "afinn", "negative")
-create_wordcloud(afinn_words, "output/election2020_afinn_neg_words.png")
+# Generate nrc sentiment analysis
+# omit_words <- c(query, "vote") # adjust as needed
+# nrc_words <- get_sentiments_words(tweets, omit_words, "nrc", "joy")
+# create_wordcloud(cloud_words, "output/nrc_cloud.png")
+# 
+# # Generate sentiment analysis with AFINN
+# afinn_words <- get_sentiments_words(tweets, omit_words, "afinn", "negative")
+# create_wordcloud(afinn_words, "output/afinn_cloud.png")
 
 
 
