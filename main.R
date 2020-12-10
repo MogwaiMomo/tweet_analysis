@@ -45,51 +45,32 @@ sa_tweets <- document_level_sa(tweets)
 
 ### Interesting questions for analysis
 
-# Step 1 - check structure
+# How are sentiment scores in this sample distributed?  
 
-dim(sa_tweets)
-str(sa_tweets)
+## 1. Significance test for normality for sent scores (H0 = is normal)
 
-# What is the overall distribution of sentiment for this sample? Is it negative or positive? 
+### First, get a smaller representation for shapiro test (5000 max)
+shap_sample <- sample_n(sa_tweets, 500)
 
-## DATAVIZ TEMPLATE
+### Get significance
+shapiro.test(shap_sample$ave_sentiment)$p.value # result: not normal. 
 
-# ggplot (data = <DATA> ) +
-#   <GEOM_FUNCTION> (mapping = aes( <MAPPINGS> ),
-#                    stat = <STAT> , position = <POSITION> ) +
-#   <COORDINATE_FUNCTION> +
-#   <FACET_FUNCTION> +
-#   <SCALE_FUNCTION> +
-#   <THEME_FUNCTION>
+## 2a. Visualize as histogram
+ggplot(sa_tweets, aes(ave_sentiment)) +
+  geom_histogram(fill="black", colour="black", alpha = 0.25, binwidth=0.05) + 
+  geom_density(aes(y=0.05*..count..), colour="black", adjust=4) +
+  geom_vline(aes(xintercept = mean(ave_sentiment)), colour="red") +
+  theme(legend.position="none")
+  
 
-# Visual inspection for normality:
+## 2b. Visualize as a boxplot (verified vs. unverified)
+ggplot(sa_tweets, aes(x=verified, y=ave_sentiment)) +
+  geom_boxplot(fill="black", colour="black", alpha = 0.25) + 
+  theme(legend.position="none")
 
-sent_p1 <- ggplot(sa_tweets, aes(ave_sentiment)) +
-  geom_histogram() +
-  stat_bin(bins = 50)
-sent_p1
+# How does average sentiment change over time?
 
-
-
-# Significance test for normally (H0 = is normal)
-
-# get a smaller representation for shapiro test (5000 max)
-shap_sample <- sample_n(sa_tweets, 100)
-
-sent_p2 <- ggplot(shap_sample, aes(ave_sentiment)) +
-  geom_histogram() +
-  stat_bin(bins = 50)
-sent_p2
-
-shapiro.test(shap_sample$ave_sentiment)
-
-
-# Calculate the average sent score of tweet sample
-
-sent_stats <- summary(sa_tweets$ave_sentiment)
-mean <- sent_stats[[4]] # slightly neg
-
-
+# Step 1. Categorize by day
 
 
 
