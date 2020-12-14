@@ -1,4 +1,3 @@
-
 explore_df <- function(df) {
   
   # EXPLORE DATA #
@@ -6,34 +5,36 @@ explore_df <- function(df) {
   
   # 1: check obj structure, change int to factors
   
-  df <- df %>%
-    mutate_if(is.integer, as.factor) %>%
-    mutate_if(is.character, as.factor)
-  str(df) # check if organization makes sense
+  df$user_id <- as.factor(df$user_id)
+  df$screen_name <- as.factor(df$screen_name)
+  df$verified <- as.factor(df$verified)
+  df$created_at <- as.Date(df$created_at,
+                           tryFormats = c("%Y-%m-%d", "%Y/%m/%d"),
+                           optional = FALSE)
+  df$account_created_at <- as.Date(df$account_created_at,
+                           tryFormats = c("%Y-%m-%d", "%Y/%m/%d"),
+                           optional = FALSE)
+  str(df)
   
-  # Adjust as needed: 
-  
-  # # horsepower -> change to numeric
-  # df$horsepower <- as.numeric(df$horsepower)
-  # 
-  # # weight -> change to numeric
-  # df$weight <- as.numeric(df$weight)
-  # 
-  # # name -> change to character
-  # df$name <- as.character(df$name)
-  # 
-  # # check again
-  # str(df)
-  
+
+
   # 2: Get summary stats
   
-  # # use summary to display stats of quants
-  # 
-  # quants <-df %>% select_if(is.numeric)
-  # quals <- df %>% select_if(is.factor)
-  # labels <- df %>% select_if(is.character)
-  # 
-  # 
+  # use summary to display stats of quants
+
+ df %>% 
+   
+   select_if(function(col) is.numeric(col) | 
+               all(col == .$element_id)) -> quants
+
+   return(quants)
+    
+  #quals <- df %>% select_if(is.factor)
+  
+ 
+}
+ 
+
   # # function to summarize key stats - NEED TO CLEAN THIS UP
   # get_stats <- function(quants){
   #   
@@ -88,8 +89,7 @@ explore_df <- function(df) {
   # plot2 <- chart.Correlation(quants,hist=T) 
   # dev.off()
   
-  
-}
+
 
 # 
 # 

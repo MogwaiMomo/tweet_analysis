@@ -1,5 +1,6 @@
-wd <- dirname(rstudioapi::getActiveDocumentContext()$path)
-setwd(wd)
+# global options
+options(stringsAsFactors = F)
+setwd(dirname(parent.frame(2)$ofile))
 
 # global options
 options(stringsAsFactors = F)
@@ -37,6 +38,8 @@ if (start == "F") {
   # load a specific file for work
   file <- "data/election2020_2020-11-18_to_2020-11-24_tweets.csv"
   tweets <- fread(file, na.strings = c("",NA))
+  tweets$user_id <- str_remove(tweets$user_id, "x")
+  tweets$status_id <- str_remove(tweets$status_id, "x")
   query <- str_split(file, "_")[[1]][1] %>%
     str_replace("data/", "")
   
