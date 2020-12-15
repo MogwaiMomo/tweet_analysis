@@ -88,3 +88,4 @@ texts <- isolate_texts(sa_tweets)
 plot_quants("output/quant_plot.png", quants, "element_id")
 
 # next: plot distributions of quants split by factors
+# https://www.r-graph-gallery.com/histogram_several_group.html
