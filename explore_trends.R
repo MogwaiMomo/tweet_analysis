@@ -1,39 +1,25 @@
-explore_df <- function(df) {
-  
-  # EXPLORE DATA #
-  ################
-  
-  # 1: check obj structure, change int to factors
-  
-  df$user_id <- as.factor(df$user_id)
-  df$screen_name <- as.factor(df$screen_name)
-  df$verified <- as.factor(df$verified)
-  df$created_at <- as.Date(df$created_at,
-                           tryFormats = c("%Y-%m-%d", "%Y/%m/%d"),
-                           optional = FALSE)
-  df$account_created_at <- as.Date(df$account_created_at,
-                           tryFormats = c("%Y-%m-%d", "%Y/%m/%d"),
-                           optional = FALSE)
-  str(df)
-  
-
-
-  # 2: Get summary stats
-  
-  # use summary to display stats of quants
-
+isolate_quants <- function(df) {
  df %>% 
-   
-   select_if(function(col) is.numeric(col) | 
+    select_if(function(col) is.numeric(col) | 
                all(col == .$element_id)) -> quants
-
    return(quants)
-    
-  #quals <- df %>% select_if(is.factor)
-  
- 
 }
  
+isolate_quals <- function(df) {
+  df %>% 
+    select_if(function(col) is.factor(col) | 
+                all(col == .$element_id)) -> quals
+  return(quals)
+}
+
+isolate_texts <- function(df) {
+  df %>% 
+    select_if(function(col) is.character(col) | 
+                all(col == .$element_id)) -> texts
+  return(texts)
+}
+
+
 
   # # function to summarize key stats - NEED TO CLEAN THIS UP
   # get_stats <- function(quants){

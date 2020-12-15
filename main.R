@@ -2,8 +2,6 @@
 options(stringsAsFactors = F)
 setwd(dirname(parent.frame(2)$ofile))
 
-# global options
-options(stringsAsFactors = F)
 library(tidyverse)
 library(tidytext)
 require(data.table)
@@ -60,17 +58,31 @@ if (start == "F") {
 
 # take only cols of interest for text-mining analysis
 tweets %>% 
-  select(c(1:5,13,14,17,78,83,84)) -> tweets
+  select(c(3:5,13,14,17,78,83,84)) -> tweets
 
 # get sentiment scores per document
 sa_tweets <- document_level_sa(tweets)
 
 
-# run exploratory analysis
-explore_df(sa_tweets)
+# adjust variable types for analysis
+sa_tweets$screen_name <- as.factor(sa_tweets$screen_name)
+sa_tweets$verified <- as.factor(sa_tweets$verified)
+sa_tweets$created_at <- as.Date(sa_tweets$created_at,
+                         tryFormats = c("%Y-%m-%d", "%Y/%m/%d"),
+                         optional = FALSE)
+sa_tweets$account_created_at <- as.Date(sa_tweets$account_created_at,
+                                 tryFormats = c("%Y-%m-%d", "%Y/%m/%d"),
+                                 optional = FALSE)
 
 
+# create quant var df
+quants <- isolate_quants(sa_tweets)
 
+# create qual var df
+quals <- isolate_quals(sa_tweets)
+
+# create NLP var df
+texts <- isolate_texts(sa_tweets)
 
 
 
