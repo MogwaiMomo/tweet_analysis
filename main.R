@@ -84,6 +84,7 @@ quals <- isolate_quals(sa_tweets)
 # create NLP var df
 texts <- isolate_texts(sa_tweets)
 
+# check distribution & regression plots of all quant vars
+plot_quants("output/quant_plot.png", quants, "element_id")
 
-
-
+# next: plot distributions of quants split by factors

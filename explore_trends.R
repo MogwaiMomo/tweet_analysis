@@ -19,66 +19,33 @@ isolate_texts <- function(df) {
   return(texts)
 }
 
+   
+# 3. Graph & explore variables
+
+## quant plots
+plot_quants <- function(file, df, omit_var=NULL) {
+  png(filename=file, width = 1480, height = 1480)
+  if (!is.null(omit_var)) {
+    df %>%
+      select(-all_of(omit_var)) -> df
+  }
+  plot <- chart.Correlation(df,hist=T)
+  dev.off()
+}
 
 
-  # # function to summarize key stats - NEED TO CLEAN THIS UP
-  # get_stats <- function(quants){
-  #   
-  #   # get min, max, mean, etc.
-  #   stats.table <- as.df.frame.matrix(summary(quants))
-  #   names(stats.table) <- trimws(names(stats.table))
-  #   # ugly hack to calculate sd & append to the summary table
-  #   # get sd as vector
-  #   stats.sd <- df.frame("sd" = sapply(quants, sd)) %>%
-  #     round(digit = 4)
-  #   # reformat
-  #   formatted.stats.sd <- stats.sd %>%
-  #     # preserve var names
-  #     as.df.table(keep.rownames = T) %>%
-  #     # add formatting to match summary table
-  #     mutate(sd = paste("Sd : ", sd)) %>%
-  #     # transpose to wide
-  #     t %>% df.table(keep.rownames = T) %>%
-  #     # drop redundant first col
-  #     dplyr::select(-1)
-  #   # assign first row to table names
-  #   names(formatted.stats.sd) <- unlist(formatted.stats.sd[1,])
-  #   # get rid of redundant first row
-  #   final <- formatted.stats.sd[2,]
-  #   
-  #   # STILL TO DO: append sd to stats table
-  #   
-  #   stats.table.tmp <- rbind(stats.table[1:4,], final)
-  #   stats.table <- rbind(stats.table.tmp, stats.table[5:6,])
-  #   
-  #   return(stats.table)
-  # }
-  # 
-  # stats.summary <-  get_stats(quants) 
-  # 
-  # # 3. Graph & explore variables 
-  # 
-  # ## Plot all factor-based graphs
-  # 
-  # # set grid of plots 1rx3c
-  # par(mfrow=c(1,3))
-  # attach(df)
-  # boxplot(mpg ~ cylinders, xlab = "cyl")
-  # boxplot(mpg ~ year, xlab = "year")
-  # boxplot(mpg ~ origin, xlab = "origin")
-  # 
-  # 
-  # ## plot all single-var & two-var quant graphs
-  # 
-  # library(PerformanceAnalytics)
-  # png(filename="plot.png", width = 1480, height = 1480)
-  # plot2 <- chart.Correlation(quants,hist=T) 
-  # dev.off()
-  
 
 
+
+# set grid of plots 1rx3c
+# par(mfrow=c(1,3))
 # 
-# 
+#   boxplot(mpg ~ cylinders, xlab = "cyl")
+#   boxplot(mpg ~ year, xlab = "year")
+#   boxplot(mpg ~ origin, xlab = "origin")
+
+
+
 # ### Interesting questions for analysis
 # 
 # # How are sentiment scores in this sample distributed?  
