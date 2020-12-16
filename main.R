@@ -29,7 +29,6 @@ date.string <- as.character(Sys.Date())
 query_file_name <- paste0(output_path, query, "_", end_date, "_to_", date.string, "_tweets.csv")
 
 
-
 start <- readline(prompt = "Load default file (F) or pull tweets (T)? ")
 
 if (start == "F") {
@@ -89,3 +88,10 @@ plot_quants("output/quant_plot.png", quants, "element_id")
 
 # next: plot distributions of quants split by factors
 # https://www.r-graph-gallery.com/histogram_several_group.html
+
+library("hrbrthemes")
+
+# Not working - verified isn't being processed as a parameter
+plot_group_histogram("output/group_hist.png", sa_tweets, verified, ave_sentiment)
+
+

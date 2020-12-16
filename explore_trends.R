@@ -34,7 +34,19 @@ plot_quants <- function(file, df, omit_var=NULL) {
 }
 
 
+# group histogram
 
+plot_group_histogram <- function(file, df, factor_var, num_var) {
+  png(filename=file, width = 1480, height = 1000)
+  
+  df %>%
+    group_by(factor_var) -> grouped_df
+  
+  plot <- grouped_df %>%
+    ggplot(aes(x=num_var, fill=factor_var)) +
+    geom_histogram(color="#e9ecef", alpha=0.6, position = 'identity')
+  dev.off()
+}
 
 
 # set grid of plots 1rx3c
