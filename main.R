@@ -92,6 +92,9 @@ plot_quants("output/quant_plot.png", quants, "element_id")
 library("hrbrthemes")
 
 # Not working - verified isn't being processed as a parameter
-plot_group_histogram("output/group_hist.png", sa_tweets, verified, ave_sentiment)
+
+
+plot <- plot_group_histogram(sa_tweets, "verified", "ave_sentiment")
+ggsave("output/group_hist.png", width = 14, height = 10)
 
 

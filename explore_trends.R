@@ -36,17 +36,35 @@ plot_quants <- function(file, df, omit_var=NULL) {
 
 # group histogram
 
-plot_group_histogram <- function(file, df, factor_var, num_var) {
-  png(filename=file, width = 1480, height = 1000)
+#https://community.rstudio.com/t/how-to-turn-strings-from-function-arguments-into-column-names-with-dplyr/19438
+
+plot_group_histogram <- function(df, factor_var, num_var) {
+  factor_var <- sym(factor_var)
+  num_var <- sym(num_var)
   
   df %>%
+    mutate(num_var = !!num_var) %>%
+    mutate(factor_var = !!factor_var) %>%
     group_by(factor_var) -> grouped_df
   
   plot <- grouped_df %>%
     ggplot(aes(x=num_var, fill=factor_var)) +
     geom_histogram(color="#e9ecef", alpha=0.6, position = 'identity')
-  dev.off()
+  
+  return(plot)
+  
 }
+
+
+
+calculate_foo <- function(df, passed_column1, passed_column2){
+  column_sym <- sym(passed_column1)
+  print(column_sym)
+  #df %>% 
+    #mutate(new_column2 = !!column_sym)
+}
+
+
 
 
 # set grid of plots 1rx3c
