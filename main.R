@@ -91,3 +91,6 @@ ggsave("output/sent_by_verified.png", width = 14, height = 10)
 
 plot <- plot_boxplot(sa_tweets, "verified", "favorite_count")
 ggsave("output/fcount_by_verified.png", width = 14, height = 10)
+
+# Next step topic modeling ... 
+# https://www.tidytextmining.com/topicmodeling.html
