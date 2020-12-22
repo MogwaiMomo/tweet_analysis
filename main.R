@@ -7,7 +7,6 @@ library(tidytext)
 require(data.table)
 require(ggplot2)
 require(gridExtra)
-require(PerformanceAnalytics)
 require(magrittr)
 library(rtweet)
 library(janitor)
@@ -89,9 +88,7 @@ plot_quants("output/quant_plot.png", quants, "element_id")
 # next: plot distributions of quants split by factors
 # https://www.r-graph-gallery.com/histogram_several_group.html
 
-library("hrbrthemes")
 
-# Not working - verified isn't being processed as a parameter
 
 
 plot <- plot_group_histogram(sa_tweets, "verified", "ave_sentiment")

@@ -1,3 +1,7 @@
+library(hrbrthemes)
+require(PerformanceAnalytics)
+
+
 isolate_quants <- function(df) {
  df %>% 
     select_if(function(col) is.numeric(col) | 
