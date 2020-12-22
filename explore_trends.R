@@ -38,11 +38,8 @@ plot_quants <- function(file, df, omit_var=NULL) {
 }
 
 
-# group histogram
-
-#https://community.rstudio.com/t/how-to-turn-strings-from-function-arguments-into-column-names-with-dplyr/19438
-
-plot_group_histogram <- function(df, factor_var, num_var) {
+# explore categories by box plot
+plot_boxplot <- function(df, factor_var, num_var) {
   factor_var <- sym(factor_var)
   num_var <- sym(num_var)
   
@@ -52,31 +49,10 @@ plot_group_histogram <- function(df, factor_var, num_var) {
     group_by(factor_var) -> grouped_df
   
   plot <- grouped_df %>%
-    ggplot(aes(x=num_var, fill=factor_var)) +
-    geom_histogram(color="#e9ecef", alpha=0.6, position = 'identity')
-  
-  return(plot)
-  
+    ggplot(aes(x=factor_var, y=num_var)) +
+    geom_boxplot()
 }
 
-
-
-calculate_foo <- function(df, passed_column1, passed_column2){
-  column_sym <- sym(passed_column1)
-  print(column_sym)
-  #df %>% 
-    #mutate(new_column2 = !!column_sym)
-}
-
-
-
-
-# set grid of plots 1rx3c
-# par(mfrow=c(1,3))
-# 
-#   boxplot(mpg ~ cylinders, xlab = "cyl")
-#   boxplot(mpg ~ year, xlab = "year")
-#   boxplot(mpg ~ origin, xlab = "origin")
 
 
 

@@ -1,6 +1,4 @@
-# global options
 options(stringsAsFactors = F)
-setwd(dirname(parent.frame(2)$ofile))
 
 library(tidyverse)
 library(tidytext)
@@ -83,15 +81,13 @@ quals <- isolate_quals(sa_tweets)
 texts <- isolate_texts(sa_tweets)
 
 # check distribution & regression plots of all quant vars
-plot_quants("output/quant_plot.png", quants, "element_id")
+plot_quants("output/quant_array.png", quants, "element_id")
 
 # next: plot distributions of quants split by factors
 # https://www.r-graph-gallery.com/histogram_several_group.html
 
+plot <- plot_boxplot(sa_tweets, "verified", "ave_sentiment")
+ggsave("output/sent_by_verified.png", width = 14, height = 10)
 
-
-
-plot <- plot_group_histogram(sa_tweets, "verified", "ave_sentiment")
-ggsave("output/group_hist.png", width = 14, height = 10)
-
-
+plot <- plot_boxplot(sa_tweets, "verified", "favorite_count")
+ggsave("output/fcount_by_verified.png", width = 14, height = 10)
