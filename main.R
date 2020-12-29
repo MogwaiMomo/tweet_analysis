@@ -18,6 +18,7 @@ source("tidy_tokens.R")
 source("sentiment_analysis.R")
 source("explore_trends.R")
 
+
 # define necessary string vars
 output_path <- "data/"
 query <- "election2020"
@@ -93,4 +94,6 @@ plot <- plot_boxplot(sa_tweets, "verified", "favorite_count")
 ggsave("output/fcount_by_verified.png", width = 14, height = 10)
 
 # Next step topic modeling ... 
+source("topic_modeling.R")
+
 # https://www.tidytextmining.com/topicmodeling.html
