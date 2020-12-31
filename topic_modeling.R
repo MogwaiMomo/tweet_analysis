@@ -1,19 +1,33 @@
 # working through the following tutorial on LDA topic modeling
 # https://www.tidytextmining.com/topicmodeling.html
 
-library("topicmodels")
-library("tm")
+library(topicmodels)
+library(tm)
+library(hunspell)
 
 # Step 1: create a TDM object from my collection of tweets using the TM package (try going from tidy objects to TDMs and back)
 
 # Step 1a: create a tidy object from the 'texts' df
 
-# Need a custom tibble of twitter-related noise terms:
+# Sidebar: Use cleaning/preprocessing steps from this tweet-specific vignette: https://vsokolov.org/courses/41000/notes/trump-tweets.html
 
+# Create "vectorised stemming/spellcheck function" using hunspell: 
+my_hunspell_stem <- function(word) {
+  stem_word <- hunspell_stem(word)[[1]]
+  if (length(stem_word) == 0) return(word) else return(stem_word[1])
+}
+vec_hunspell_stem <- Vectorize(my_hunspell_stem, "word")
 
+# Clean/preprocess tweets 
 texts %>%
-  select(-hashtags) %>% # remove hashtags variable, which we're not using
+  mutate(text = str_replace_all(text, 
+                                pattern=regex("(www|https?[^\\s]+)"),
+                                replacement = "")) %>% #rm urls
+  mutate(text = str_replace_all(text,
+                                pattern = "[[:digit:]]",
+                                replacement = "")) %>%
   unnest_tokens(word, text) %>%
+  mutate(word = vec_hunspell_stem(word)) %>%
   anti_join(stop_words) %>% 
   count(element_id, word, sort = TRUE) %>%
   rename(document = element_id, term = word, count = n)  -> texts_td
@@ -49,6 +63,6 @@ texts_top_terms_per_topic %>%
 
 ggsave("output/top_terms_per_topic.png")
 
-# NOTE: these results suck because of the URLs and stopwords. Need to remove them
+save_as_csv(texts_td, file_name="data/tidy_tweets.csv")
 
-# Removed stopwords with anti_join(). Next: make a custom table of twitter noise terms (t.co, https://, hashtags, etc.)
+
