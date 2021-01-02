@@ -92,10 +92,20 @@ bottom10_log_ration2_1 <- beta_spread %>%
   select(term, log_ratio2_1) %>%
   top_n(-10, log_ratio2_1)
 
-most_unique_by_topic <- rbind(top10_log_ration2_1, bottom10_log_ration2_1)
+most_unique_by_topic <- rbind(top10_log_ration2_1, bottom10_log_ration2_1) %>%
+  mutate(topic = ifelse(log_ratio2_1 > 0, "2","1"))
 
 # graph it 
 
-plot <- ggplot(mpg, aes(class, hwy)) +
-  f + geom_col() + # x, y, alpha, color, fill, group, linetype, size
-  + coord_flip()
+plot <- ggplot(most_unique_by_topic)
+
+xlim_min <- -10
+xlim_max <- 10
+  
+plot + 
+  geom_col(aes(x = log_ratio2_1, y = reorder(term, log_ratio2_1), fill = topic)) +
+  xlim(xlim_min, xlim_max) +
+  labs(title = "Beta Spread Between Topics 1 & 2", x = "Log2 Ratio", y = "") +
+  theme(plot.title = element_text(hjust = 0.5)) # center title
+  
+
