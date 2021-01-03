@@ -95,5 +95,5 @@ ggsave("output/fcount_by_verified.png", width = 14, height = 10)
 
 # Next step topic modeling ... 
 source("topic_modeling.R")
-
+source("ch6_the_great_library_heist.R")
 # https://www.tidytextmining.com/topicmodeling.html
