@@ -1,13 +1,21 @@
 library(gutenbergr)
 library(stringr)
 
-titles <- c("Twenty Thousand Leagues under the Sea", 
-            "The War of the Worlds",
-            "Pride and Prejudice", 
+titles1 <- c("Twenty Thousand Leagues under the Sea", 
+            "The War of the Worlds")
+titles2 <- c("Pride and Prejudice", 
             "Great Expectations")
 
-books <- gutenberg_works(title %in% titles) %>%
+
+books1 <- gutenberg_works(title %in% titles1) %>%
   gutenberg_download(meta_fields = "title")
+books2 <- gutenberg_works(title %in% titles2) %>%
+  gutenberg_download(meta_fields = "title")
+books <- rbind(books1, books2)
+
+# PROBLEM - The following code snippet is not picking up Pride & Prejudice. Need to fix.
+
+# PLAN: Isolate filter(books ... "pride and prejudice") and see if "^chapter " is picked up. 
 
 by_chapter <- books %>%
   group_by(title) %>%
@@ -21,7 +29,24 @@ by_chapter <- books %>%
 by_chapter_word <- by_chapter %>%
   unnest_tokens(word, text)
 
-word_counts <- by_chapter_word %>%
+word_counts <- by_chapter_word %>% # chapters are the documents
   anti_join(stop_words) %>%
   count(document, word, sort = TRUE) %>%
   ungroup()
+
+# create a DTM using cast_dtm() from the tidytext package
+chapter_dtm <- word_counts %>%
+  cast_dtm(document, word, n)
+
+chapter_lda <- LDA(chapter_dtm, 4) # each topic corresponds to one of the books
+
+chapter_topics <- tidy(chapter_lda, matrix = "beta") # word-topic probabilities
+
+# find the top 5 terms within each topic
+top5_terms_per_topic <- chapter_topics %>%
+  group_by(topic) %>%
+  top_n(5) %>%
+  ungroup() %>%
+  arrange(topic, -beta)
+
+# My results suck! I know why: Pride and Prejudice is missing. Where did it go? 
