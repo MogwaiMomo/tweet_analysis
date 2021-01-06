@@ -84,8 +84,3 @@ top5_terms_per_topic %>%
   facet_wrap(~ topic, scales = "free") +
   scale_y_reordered()
 
-# Next challenge: what's the best protocol for extracting topics from customer reviews?
-
-# Work through this 
-
-# https://medium.com/hackernoon/natural-language-processing-of-customer-reviews-49dff6fd9e57
